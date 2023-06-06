@@ -4,6 +4,7 @@
 	"recommendations": [
 		"msjsdiag.vscode-react-native",
 		"esbenp.prettier-vscode",
-		"dbaeumer.vscode-eslint"
+		"dbaeumer.vscode-eslint",
+		"hediet.vscode-drawio"
 	]
 }
