@@ -1,7 +1,6 @@
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from "react-native";
 
-
 const requestLocationPermission = async () => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -15,21 +14,15 @@ const requestLocationPermission = async () => {
 
 const getLocation = async (callback) => {
   if (!requestLocationPermission()) return null;
-  return (Geolocation.getCurrentPosition(
-    position => {
-      console.log(position.coords);
-      callback(position.coords);
-    },
-    error => {
-      console.log(error.code, error.message);
-      callback(false);
-    },
+  Geolocation.getCurrentPosition(
+    position => { return callback(position.coords); },
+    error => { return callback(false); },
     {
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 10000,
     },
-  ));
+  );
 };
 
 export default getLocation;
