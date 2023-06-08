@@ -33,14 +33,4 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
         );
   }
-
-  /**
-   * Override the onCreate method to pass null to the super method. This is required to avoid 
-   * crashes related to View state being not persisted consistently across Activity restarts.
-   * (react-native-screens)
-   */
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(null);
-  }
 }
