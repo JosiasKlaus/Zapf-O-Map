@@ -1,5 +1,5 @@
 import Geolocation from 'react-native-geolocation-service';
-import { PermissionsAndroid } from "react-native";
+import {PermissionsAndroid} from 'react-native';
 
 const requestLocationPermission = async () => {
   try {
@@ -12,17 +12,33 @@ const requestLocationPermission = async () => {
   }
 };
 
-const getLocation = async (callback) => {
+export const getLocation = async callback => {
   if (!requestLocationPermission()) return null;
   Geolocation.getCurrentPosition(
-    position => { return callback(position.coords); },
-    error => { return callback(false); },
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 10000,
+    position => {
+      callback(position.coords);
     },
+    error => {
+      callback(null);
+    },
+    {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
   );
 };
 
-export default getLocation;
+export const calculateRegion = (lat, lon, radius) => {
+  const angularDistance = radius / 40075;
+  const latDelta = radius / (111.32 * 1000);
+  const lonDelta = Math.abs(
+    Math.atan2(
+      Math.sin(angularDistance) * Math.cos(lat),
+      Math.cos(angularDistance) - Math.sin(lat) * Math.sin(lat),
+    ),
+  );
+
+  return {
+    latitude: lat,
+    longitude: lon,
+    latitudeDelta: latDelta,
+    longitudeDelta: lonDelta,
+  };
+};
