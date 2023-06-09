@@ -1,3 +1,4 @@
+Set-Location -Path ..
 $ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest -Uri "https://dl.google.com/android/repository/commandlinetools-win-9477386_latest.zip" -OutFile commandlinetools-win_latest.zip
 Expand-Archive .\commandlinetools-win_latest.zip -DestinationPath .\android
