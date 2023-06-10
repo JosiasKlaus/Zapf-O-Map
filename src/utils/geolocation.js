@@ -1,6 +1,8 @@
 import Geolocation from 'react-native-geolocation-service';
 import {PermissionsAndroid} from 'react-native';
 
+let regionCache = {};
+
 const requestLocationPermission = async () => {
   try {
     const granted = await PermissionsAndroid.request(
@@ -26,6 +28,10 @@ export const getLocation = async callback => {
 };
 
 export const calculateRegion = (lat, lon, radius) => {
+  if (regionCache[`${lat};${lon};${radius}`]) {
+    return regionCache[`${lat};${lon};${radius}`];
+  }
+
   const angularDistance = radius / 40075;
   const latDelta = radius / (111.32 * 1000);
   const lonDelta = Math.abs(
@@ -35,10 +41,13 @@ export const calculateRegion = (lat, lon, radius) => {
     ),
   );
 
-  return {
+  const region = {
     latitude: lat,
     longitude: lon,
     latitudeDelta: latDelta,
     longitudeDelta: lonDelta,
   };
+
+  regionCache[`${lat};${lon};${radius}`] = region;
+  return region;
 };
