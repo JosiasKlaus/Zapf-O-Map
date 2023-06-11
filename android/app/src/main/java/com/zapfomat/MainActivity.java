@@ -1,6 +1,7 @@
 package com.zapfomat;
 
 import android.os.Bundle;
+import androidx.core.view.WindowCompat;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
@@ -34,13 +35,9 @@ public class MainActivity extends ReactActivity {
         );
   }
 
-  /**
-   * Override the onCreate method to pass null to the super method. This is required to avoid 
-   * crashes related to View state being not persisted consistently across Activity restarts.
-   * (react-native-screens)
-   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(null);
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+    super.onCreate(savedInstanceState);
   }
 }

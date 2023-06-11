@@ -1,128 +1,92 @@
-import {StyleSheet, PermissionsAndroid, View} from 'react-native';
+import {StyleSheet} from 'react-native';
+import {useState, useEffect, useRef} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-import Geolocation from 'react-native-geolocation-service';
-import {useState} from 'react';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Slider from '@react-native-community/slider';
-import axios from 'axios';
-import { Button } from 'react-native-paper';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTheme} from 'react-native-paper';
 
-const requestLocationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Geolocation Permission',
-        message: 'Can we access your location?',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    console.log('granted', granted);
-    if (granted === 'granted') {
-      console.log('You can use Geolocation');
-      return true;
-    } else {
-      console.log('You cannot use Geolocation');
-      return false;
-    }
-  } catch (err) {
-    return false;
-  }
+import {getLocation, calculateRegion} from '../utils/geolocation';
+import {getStationList} from '../api/tankerkoenig';
+import StationMarker from '../components/stationMarker';
+import StationSheet from '../components/stationSheet';
+import {mapStyleDark, mapStyleLight} from '../utils/mapstyle';
+
+const DEFAULT_LATITUDE = 50.563527;
+const DEFAULT_LONGITUDE = 8.500261;
+const DEFAULT_RADIUS = 1000;
+
+const DEFAULT_REGION = {
+  latitude: DEFAULT_LATITUDE,
+  longitude: DEFAULT_LONGITUDE,
+  latitudeDelta: 0.015,
+  longitudeDelta: 0.015,
 };
 
 function MapScreen() {
-  const [location, setLocation] = useState(false);
+  const [location, setLocation] = useState(DEFAULT_REGION);
+  const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [stations, setStations] = useState([]);
-  const [radius, setRadius] = useState(0.015);
+  const [station, setStation] = useState(null);
 
-  const getStationData = async (latitude, longitude) => {
-    const response = axios.get(
-      `https://creativecommons.tankerkoenig.de/json/list.php?lat=${latitude}&lng=${longitude}&rad=5&sort=dist&type=all&apikey=00000000-0000-0000-0000-000000000002`,
-    );
-    response.then(res => {
-      setStations(res.data.stations);
-    });
-  };
+  const insets = useSafeAreaInsets();
+  const theme = useTheme();
+  const mapRef = useRef(null);
 
-  if (!location) {
-    const result = requestLocationPermission();
-    result.then(res => {
-      if (res) {
-        Geolocation.getCurrentPosition(
-          position => {
-            setLocation(position);
-            getStationData(position.coords.latitude, position.coords.longitude);
-          },
-          error => {
-            console.log(error.code, error.message);
-            setLocation(false);
-          },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-        );
-      }
-    });
+  if (location == DEFAULT_REGION) {
+    getLocation(setLocation);
   }
 
+  // Get station list on location or radius change
+  useEffect(() => {
+    getStationList(location.latitude, location.longitude, radius).then(
+      data => {
+        setStations(data);
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  }, [location, radius]);
+
   return (
-    <View style={styles.container}>
-      <Slider
-        style={{width: 400, height: 80}}
-        step={0.005}
-        minimumValue={0.015}
-        maximumValue={0.1}
-        value={radius}
-        onValueChange={setRadius}
-      />
-      <Button onPress={() => getStationData(location.coords.latitude, location.coords.longitude)}>Update</Button>
+    <GestureHandlerRootView style={styles.container}>
       <MapView
-        style={styles.map}
+        ref={mapRef}
+        style={styles.mapView}
+        customMapStyle={theme.dark ? mapStyleDark : mapStyleLight}
         showsUserLocation={true}
-        showsTraffic={true}
         zoomEnabled={false}
-        rotateEnabled={false}
-        scrollEnabled={false}
-        showsPointsOfInterest={false}
-        customMapStyle={[
-          {
-            featureType: 'poi',
-            elementType: 'labels',
-            stylers: [
-              {
-                visibility: 'off',
-              },
-            ],
-          },
-        ]}
-        region={{
-          latitude: location ? location.coords.latitude : 51.1642292,
-          longitude: location ? location.coords.longitude : 10.4541194,
-          latitudeDelta: radius,
-          longitudeDelta: radius,
-        }}>
-        {stations.map((marker, index) => (
+        toolbarEnabled={false}
+        moveOnMarkerPress={false}
+        mapPadding={{top: insets.top, bottom: 20}}
+        region={calculateRegion(location.latitude, location.longitude, radius)}
+        onPress={() => setStation(null)}>
+        {stations.map((station, index) => (
           <Marker
             key={index}
-            coordinate={{
-              longitude: marker.lng,
-              latitude: marker.lat,
-            }}
-            title={marker.brand}
-            description="Super E5: 1,799€"
-          />
+            tracksViewChanges={false}
+            coordinate={{longitude: station.lng, latitude: station.lat}}
+            onPress={() => {
+              setStation(station);
+              mapRef.current.animateToRegion(calculateRegion(station.lat - 0.0085, station.lng, radius), 100)
+            }}>
+            <StationMarker title={station.brand} price={station.e5} />
+          </Marker>
         ))}
       </MapView>
-    </View>
+      <StationSheet initStation={station} />
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFill,
+    flex: 1,
   },
-  map: {
+  mapView: {
     ...StyleSheet.absoluteFillObject,
-    top: 100,
   },
 });
 

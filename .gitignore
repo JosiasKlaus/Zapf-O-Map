@@ -27,7 +27,6 @@ ios/.xcode.env.local
 build/
 .idea
 .gradle
-local.properties
 *.iml
 *.hprof
 .cxx/
@@ -55,6 +54,7 @@ yarn-error.log
 
 # Bundle artifact
 *.jsbundle
+.bundle/
 
 # Ruby / CocoaPods
 /ios/Pods/
@@ -65,3 +65,7 @@ yarn-error.log
 
 # VS Code
 .vscode/.react/
+
+# Local configs
+local.properties
+Config.xcconfig
