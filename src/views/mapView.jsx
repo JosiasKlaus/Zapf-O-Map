@@ -37,7 +37,6 @@ function MapScreen() {
     getLocation(setLocation);
   }
 
-  // Get station list on location or radius change
   useEffect(() => {
     getStationList(location.latitude, location.longitude, radius).then(
       data => {
@@ -59,7 +58,7 @@ function MapScreen() {
         zoomEnabled={false}
         toolbarEnabled={false}
         moveOnMarkerPress={false}
-        mapPadding={{top: insets.top, bottom: 20}}
+        mapPadding={{top: insets.top, bottom: station ? 520 : 0}}
         region={calculateRegion(location?.latitude, location?.longitude, radius)}
         onPress={() => setStation(null)}>
         {stations.map((station, index) => (
@@ -69,7 +68,9 @@ function MapScreen() {
             coordinate={{longitude: station.lng, latitude: station.lat}}
             onPress={() => {
               setStation(station);
-              mapRef.current.animateToRegion(calculateRegion(station.lat - 0.0085, station.lng, radius), 100)
+              setTimeout(() => {
+                mapRef.current.animateToRegion(calculateRegion(station.lat, station.lng, radius), 100)
+              }, 100);
             }}>
             <StationMarker title={station.brand} price={station.e5} />
           </Marker>
@@ -83,7 +84,6 @@ function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFill,
-    flex: 1,
   },
   mapView: {
     ...StyleSheet.absoluteFillObject,
