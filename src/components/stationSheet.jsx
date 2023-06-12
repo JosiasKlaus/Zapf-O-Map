@@ -32,11 +32,10 @@ const getStationImage = (brand) => {
   }
 }
 
-const StationSheet = ({initStation}) => {
+const StationSheet = ({initStation, initSetStation}) => {
+  const [station, setStation] = useState(null);
   const bottomSheetRef = useRef(null);
   const theme = useTheme();
-
-  const [station, setStation] = useState(null);
 
   useEffect(() => {
     bottomSheetRef.current.close();
@@ -66,7 +65,8 @@ const StationSheet = ({initStation}) => {
       }}
       snapPoints={[24, 520]}
       activeOffsetY={[-1, 1]}
-      failOffsetX={[-5, 5]}>
+      failOffsetX={[-5, 5]}
+      onChange={(value) => { if (value == 0) { initSetStation(null); }}}>
       <BottomSheetScrollView contentContainerStyle={{flexGrow: 0}}>
         <Image
           style={{width: '100%', height: 180, borderRadius: 10}}

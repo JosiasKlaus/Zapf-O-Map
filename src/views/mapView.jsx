@@ -58,7 +58,7 @@ function MapScreen() {
         zoomEnabled={false}
         toolbarEnabled={false}
         moveOnMarkerPress={false}
-        mapPadding={{top: insets.top, bottom: station ? 520 : 0}}
+        mapPadding={{top: insets.top, bottom: station ? 520 : 10, left: 20}}
         region={calculateRegion(location?.latitude, location?.longitude, radius)}
         onPress={() => setStation(null)}>
         {stations.map((station, index) => (
@@ -76,7 +76,7 @@ function MapScreen() {
           </Marker>
         ))}
       </MapView>
-      <StationSheet initStation={station} />
+      <StationSheet initStation={station} initSetStation={setStation} />
     </GestureHandlerRootView>
   );
 }
