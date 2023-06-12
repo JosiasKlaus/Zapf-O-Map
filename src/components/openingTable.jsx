@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {DataTable, Surface, Text} from 'react-native-paper';
 
 const OpeningTable = ({openingTimes, overrides}) => {
@@ -8,8 +8,7 @@ const OpeningTable = ({openingTimes, overrides}) => {
 
   return (
     <View>
-      <Text style={styles.title}>Öffnungszeiten</Text>
-      <DataTable style={styles.dataTable}>
+      <DataTable style={{marginTop: 10, borderRadius: 10}}>
         {openingTimes?.map((openingTime, index) => (
           <DataTable.Row key={index}>
             <DataTable.Cell>{openingTime.text}</DataTable.Cell>
@@ -27,18 +26,5 @@ const OpeningTable = ({openingTimes, overrides}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  title: {
-    marginTop: 10,
-    marginLeft: 10,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  dataTable: {
-    marginTop: 10,
-    borderRadius: 10,
-  },
-});
 
 export default OpeningTable;
