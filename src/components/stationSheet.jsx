@@ -11,7 +11,26 @@ import OpeningTable from './openingTable';
 import StationButtons from './stationButtons';
 
 // TODO: Get image from Maps API
-// TODO: Get station data from API (detailed info)
+const getStationImage = (brand) => {
+  if (!brand) return require('../assets/other.jpg');
+  brand = brand.toLowerCase();
+  switch(brand) {
+    case 'aral':
+      return require('../assets/aral.jpg');
+    case 'shell':
+      return require('../assets/shell.jpg');
+    case 'total':
+      return require('../assets/total.jpg');
+    case 'esso':
+      return require('../assets/esso.jpg');
+    case 'avia':
+      return require('../assets/avia.jpg');
+    case 'jet':
+      return require('../assets/jet.jpg');
+    default:
+      return require('../assets/other.jpg');
+  }
+}
 
 const StationSheet = ({initStation}) => {
   const bottomSheetRef = useRef(null);
@@ -36,6 +55,7 @@ const StationSheet = ({initStation}) => {
     <BottomSheet
       ref={bottomSheetRef}
       style={{
+        marginHorizontal: 20,
         paddingHorizontal: 20,
       }}
       backgroundStyle={{
@@ -50,7 +70,7 @@ const StationSheet = ({initStation}) => {
       <BottomSheetScrollView contentContainerStyle={{flexGrow: 0}}>
         <Image
           style={{width: '100%', height: 180, borderRadius: 10}}
-          source={require('../assets/aral.jpg')}
+          source={getStationImage(station?.brand)}
         />
         <View style={{flexDirection: 'row', margin: 10}}>
           <View>
@@ -68,6 +88,7 @@ const StationSheet = ({initStation}) => {
           </View>
         </View>
         <StationButtons stationId={station?.id} />
+        <Text style={[styles.title, {marginTop: 10, marginLeft: 10}]}>Preise</Text>
         <PricingTable
           prices={{
             'Super E5': station?.e5,
@@ -75,6 +96,7 @@ const StationSheet = ({initStation}) => {
             'Diesel': station?.diesel,
           }}
         />
+        <Text style={[styles.title, {marginTop: 10, marginLeft: 10}]}>Öffnungszeiten</Text>
         {station?.wholeDay ? (
           <Text style={{margin: 10}}>Diese Tankstelle ist rund um die Uhr geöffnet</Text>
         ) : (
