@@ -2,6 +2,7 @@ import StationsList from '../views/listView.jsx';
 import MapScreen from '../views/mapView.jsx';
 import {BottomNavigation} from 'react-native-paper';
 import React from 'react';
+import HistoryView from '../views/historyView.jsx';
 
 const BottomNavigationComponent = () => {
   const [index, setIndex] = React.useState(0);
@@ -15,7 +16,7 @@ const BottomNavigationComponent = () => {
   const renderScene = BottomNavigation.SceneMap({
     list: StationsList,
     map: MapScreen,
-    history: StationsList,
+    history: HistoryView,
     settings: StationsList,
   });
 
