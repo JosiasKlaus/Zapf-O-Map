@@ -60,7 +60,7 @@ function MapScreen() {
         toolbarEnabled={false}
         moveOnMarkerPress={false}
         mapPadding={{top: insets.top, bottom: 20}}
-        region={calculateRegion(location.latitude, location.longitude, radius)}
+        region={calculateRegion(location?.latitude, location?.longitude, radius)}
         onPress={() => setStation(null)}>
         {stations.map((station, index) => (
           <Marker
