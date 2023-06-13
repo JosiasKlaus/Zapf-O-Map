@@ -1,4 +1,5 @@
 import {Text, Button} from 'react-native-paper';
+import Modal from 'react-native';
 import React, {useState} from 'react';
 import {
   View,
@@ -8,9 +9,23 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {getStationDetails, getStationList} from '../api/tankerkoenig';
+import {getLocation, calculateRegion} from '../utils/geolocation';
+
+const DEFAULT_LATITUDE = 50.563527;
+const DEFAULT_LONGITUDE = 8.500261;
+const DEFAULT_RADIUS = 100;
+
+const DEFAULT_REGION = {
+  latitude: DEFAULT_LATITUDE,
+  longitude: DEFAULT_LONGITUDE,
+  latitudeDelta: 0.015,
+  longitudeDelta: 0.015,
+};
 
 function StationList() {
-  const [stations] = useState([
+  const [stations, setStations] = useState(
+    null /*[
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 1},
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 2},
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 3},
@@ -27,30 +42,65 @@ function StationList() {
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 14},
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 15},
     {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 16},
-  ]);
+  ]*/,
+  );
+
+  const [station, setStation] = useState(null);
+  const [location, setLocation] = useState(DEFAULT_REGION);
+  const [radius, setRadius] = useState(DEFAULT_RADIUS);
+
+  if (location == DEFAULT_REGION) {
+    getLocation(setLocation);
+  }
+
+  const getStations = () => {
+    getStationList(location.latitude, location.longitude, radius).then(
+      data => {
+        setStations(data);
+      },
+      error => {
+        console.log(error);
+      },
+    );
+  };
 
   const styles = StyleSheet.create({
     backgroundStyle: {
       backgroundColor: '#f2f2f2',
     },
+    filterButtonContainer: {
+      height: 100,
+      justifyContent: 'flex-end',
+    },
+    filterButton: {
+      flex: 0.3,
+    },
   });
 
   return (
     <SafeAreaView>
+      <View style={styles.filterButtonContainer}>
+        <Button
+          style={styles.filterButton}
+          icon={<Icon name="sort" size={10} color="black" />}
+          mode="elevated"
+          buttonColor="lightgrey"
+          onPress={() => toggleVisibility()}
+        />
+      </View>
       <FlatList
         style={styles.backgroundStyle}
         data={stations}
         keyExtractor={item => item.id}
-        refreshControl={console.log("refreshing") /*Add refresh function */}
-        renderItem={
-          ({item}) => (
-            <ListElement
-              brand={item.brand}
-              price={item.price}
-              street={item.street}
-            />
-          )
-        }
+        refreshControl={getStations() /*Add refresh function */}
+        renderItem={({item}) => (
+          <ListElement
+            brand={item.brand}
+            price={item.e5}
+            street={item.street}
+            dist={item.dist}
+          />
+        )}
       />
     </SafeAreaView>
   );
@@ -60,7 +110,7 @@ function ListElement(props) {
   const [expanded, setExpanded] = useState(false);
 
   const handlePress = () => {
-    console.log("Parent");
+    console.log('Parent');
     setExpanded(prevExpanded => !prevExpanded);
   };
 
@@ -68,7 +118,7 @@ function ListElement(props) {
     container: {
       flex: 1,
       flexDirection: 'column',
-      height: (!expanded ? 75 : 150),
+      height: !expanded ? 75 : 150,
       paddingHorizontal: 10,
       margin: 1,
       backgroundColor: '#fefefe',
@@ -84,15 +134,16 @@ function ListElement(props) {
       height: 75,
       paddingHorizontal: 10,
       margin: 1,
-      borderBottomWidth: (expanded ? 1 : 0),
+      borderBottomWidth: expanded ? 1 : 0,
       borderColor: 'grey',
     },
     leftContainer: {
       flex: 0.2,
       justifyContent: 'center',
+      paddingRight: 3,
     },
     leftText: {
-      fontSize: 30,
+      fontSize: 25,
       color: 'black',
     },
     middleContainer: {
@@ -152,47 +203,56 @@ function ListElement(props) {
       <View style={[styles.container]}>
         <View style={styles.topContainer}>
           <View style={styles.leftContainer}>
-            <Text style={styles.leftText} numberOfLines={1}>{props.price}</Text>
+            <Text style={styles.leftText} numberOfLines={1}>
+              {props.price}
+            </Text>
           </View>
           <View style={styles.middleContainer}>
             <View style={styles.textContainer}>
               <Text style={styles.middleTextBrand}>{props.brand}</Text>
-              <Text style={styles.middleText} numberOfLines={2}>{props.street}</Text>
+              <Text style={styles.middleText} numberOfLines={2}>
+                {props.street} ({props.dist}km)
+              </Text>
             </View>
           </View>
           <View style={styles.rightContainer}>
-            <TouchableOpacity onPress={() => console.log('Child right')/* TODO: Add to favorites function*/}>
+            <TouchableOpacity
+              onPress={
+                console.log(
+                  'clicked faves',
+                ) /* TODO: Add to favorites function*/
+              }>
               <Icon name="star-outline" size={30} color="grey" />
             </TouchableOpacity>
           </View>
         </View>
         {expanded && (
-            <View style={styles.bottomContainer}>
-              <View style={styles.buttonContainer}>
-                <Button
-                  icon={<Icon name="directions" size={10} color="black" />}
-                  mode="elevated"
-                  buttonColor="lightgrey"
-                  onPress={() => console.log('w')}
-                />
-              </View>
-              <View style={styles.buttonContainer}>
-                <Button
-                  icon="directions"
-                  mode="elevated"
-                  buttonColor="lightgrey"
-                  onPress={() => console.log('w')}
-                />
-              </View>
-              <View style={styles.buttonContainer}>
-                <Button
-                  icon="directions"
-                  mode="elevated"
-                  buttonColor="lightgrey"
-                  onPress={() => console.log('w')}
-                />
-              </View>
+          <View style={styles.bottomContainer}>
+            <View style={styles.buttonContainer}>
+              <Button
+                icon={<Icon name="directions" size={10} color="black" />}
+                mode="elevated"
+                buttonColor="lightgrey"
+                onPress={() => console.log('w')}
+              />
             </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                icon="directions"
+                mode="elevated"
+                buttonColor="lightgrey"
+                onPress={() => console.log('w')}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                icon="directions"
+                mode="elevated"
+                buttonColor="lightgrey"
+                onPress={() => console.log('w')}
+              />
+            </View>
+          </View>
         )}
       </View>
     </TouchableOpacity>
