@@ -1,4 +1,4 @@
-import {Text, Button} from 'react-native-paper';
+import {Text, Button, IconButton} from 'react-native-paper';
 import Modal from 'react-native';
 import React, {useState} from 'react';
 import {
@@ -24,27 +24,7 @@ const DEFAULT_REGION = {
 };
 
 function StationList() {
-  const [stations, setStations] = useState(
-    null /*[
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 1},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 2},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 3},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 4},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 5},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 6},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 7},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 8},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 9},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 10},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 11},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 12},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 13},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 14},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 15},
-    {brand: 'ARAL', price: '1,99', street: 'Allee 2', id: 16},
-  ]*/,
-  );
-
+  const [stations, setStations] = useState(null);
   const [station, setStation] = useState(null);
   const [location, setLocation] = useState(DEFAULT_REGION);
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
@@ -196,6 +176,10 @@ function ListElement(props) {
       color: 'black',
       fontSize: 16,
     },
+    buttonIcon: {
+      alignItems: 'center',
+      justifyContent: 'center', 
+    }
   });
 
   return (
@@ -216,25 +200,29 @@ function ListElement(props) {
             </View>
           </View>
           <View style={styles.rightContainer}>
-            <TouchableOpacity
+            <Button
+              style={styles.buttonIcon}
+              mode="elevated"
+              buttonColor="lightgrey"
               onPress={
                 console.log(
                   'clicked faves',
                 ) /* TODO: Add to favorites function*/
               }>
-              <Icon name="star-outline" size={30} color="grey" />
-            </TouchableOpacity>
+              <Icon style={height=10} name="star-outline" size={30} color="grey" />
+            </Button>
           </View>
         </View>
         {expanded && (
           <View style={styles.bottomContainer}>
             <View style={styles.buttonContainer}>
               <Button
-                icon={<Icon name="directions" size={10} color="black" />}
+              style={styles.buttonIcon}
                 mode="elevated"
                 buttonColor="lightgrey"
-                onPress={() => console.log('w')}
-              />
+                onPress={() => console.log('w')}>
+                <Icon name="directions" size={30} color="black" />
+              </Button>
             </View>
             <View style={styles.buttonContainer}>
               <Button
