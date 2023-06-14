@@ -1,5 +1,3 @@
-import {StyleSheet, View} from 'react-native';
-import {useState} from 'react';
 import {
   Appbar,
   Button,
@@ -11,11 +9,14 @@ import {
   TextInput,
   useTheme,
 } from 'react-native-paper';
-import useAsyncStorage from '../hooks/useAsyncStorage';
+import {StyleSheet, View} from 'react-native';
+
 import {DatePickerInput} from 'react-native-paper-dates';
 import { ScrollView } from 'react-native';
+import useAsyncStorage from '../hooks/useAsyncStorage';
+import {useState} from 'react';
 
-function HistoryView() {
+const HistoryViewComponent = () => {
   const [history, setHistory] = useAsyncStorage('history', []);
   const [visible, setVisible] = useState(false);
 
@@ -154,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HistoryView;
+export default HistoryViewComponent;
