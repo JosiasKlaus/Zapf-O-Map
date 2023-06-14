@@ -1,18 +1,18 @@
-import {Image, StyleSheet, View} from 'react-native';
-import {useState, useEffect, useRef} from 'react';
-import MapView, {Marker} from 'react-native-maps';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import Slider from '@react-native-community/slider';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Appbar, Banner, useTheme} from 'react-native-paper';
+import {Image, StyleSheet, View} from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
+import {calculateRegion, getLocation} from '../utils/geolocation';
+import {mapStyleDark, mapStyleLight} from '../utils/mapstyle';
+import {useEffect, useRef, useState} from 'react';
 
-import {getLocation, calculateRegion} from '../utils/geolocation';
-import {getStationList} from '../api/tankerkoenig';
+import { BaseAnimationBuilder } from 'react-native-reanimated';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import MapHeader from '../components/mapHeader';
+import Slider from '@react-native-community/slider';
 import StationMarker from '../components/stationMarker';
 import StationSheet from '../components/stationSheet';
-import {mapStyleDark, mapStyleLight} from '../utils/mapstyle';
-import { BaseAnimationBuilder } from 'react-native-reanimated';
-import MapHeader from '../components/mapHeader';
+import {getStationList} from '../api/tankerkoenig';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const DEFAULT_LATITUDE = 50.563527;
 const DEFAULT_LONGITUDE = 8.500261;
@@ -25,7 +25,7 @@ const DEFAULT_REGION = {
   longitudeDelta: 0.015,
 };
 
-function MapScreen() {
+const MapViewComponent = ({stationId}) => {
   const [location, setLocation] = useState(DEFAULT_REGION);
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [stations, setStations] = useState([]);
@@ -40,7 +40,7 @@ function MapScreen() {
   }
 
   useEffect(() => {
-    getStationList(location.latitude, location.longitude, radius).then(
+    getStationList(location.latitude, location.longitude, radius/1000).then(
       data => {
         setStations(data);
       },
@@ -59,9 +59,9 @@ function MapScreen() {
           style={styles.mapView}
           customMapStyle={theme.dark ? mapStyleDark : mapStyleLight}
           showsUserLocation={true}
-          zoomEnabled={false}
           toolbarEnabled={false}
           moveOnMarkerPress={false}
+          showsMyLocationButton={false}
           mapPadding={{top: 10, bottom: station ? 520 : 10, left: 10, right: 10}}
           region={calculateRegion(location?.latitude, location?.longitude, radius)}
           onPress={() => setStation(null)}>
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapScreen;
+export default MapViewComponent;
