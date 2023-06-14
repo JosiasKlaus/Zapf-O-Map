@@ -1,34 +1,35 @@
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import {StyleSheet} from 'react-native';
-import {Image, View} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
-import React, {useRef, useEffect, useState} from 'react';
-import {useTheme} from 'react-native-paper';
-import {getStationDetails} from '../api/tankerkoenig';
+import {Image, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+
 import OpeningChip from './openingChip';
-import PricingTable from './pricingTable';
 import OpeningTable from './openingTable';
+import PricingTable from './pricingTable';
 import StationButtons from './stationButtons';
+import {StyleSheet} from 'react-native';
+import {getStationDetails} from '../api/tankerkoenig';
+import {useTheme} from 'react-native-paper';
 
 // TODO: Get image from Maps API
 const getStationImage = (brand) => {
-  if (!brand) return require('../assets/other.jpg');
+  if (!brand) return require('../assets/images/other.jpg');
   brand = brand.toLowerCase();
   switch(brand) {
     case 'aral':
-      return require('../assets/aral.jpg');
+      return require('../assets/images/aral.jpg');
     case 'shell':
-      return require('../assets/shell.jpg');
+      return require('../assets/images/shell.jpg');
     case 'total':
-      return require('../assets/total.jpg');
+      return require('../assets/images/total.jpg');
     case 'esso':
-      return require('../assets/esso.jpg');
+      return require('../assets/images/esso.jpg');
     case 'avia':
-      return require('../assets/avia.jpg');
+      return require('../assets/images/avia.jpg');
     case 'jet':
-      return require('../assets/jet.jpg');
+      return require('../assets/images/jet.jpg');
     default:
-      return require('../assets/other.jpg');
+      return require('../assets/images/other.jpg');
   }
 }
 
