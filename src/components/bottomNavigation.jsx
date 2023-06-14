@@ -1,8 +1,9 @@
-import StationsList from '../views/listView.jsx';
-import MapScreen from '../views/mapView.jsx';
 import {BottomNavigation} from 'react-native-paper';
+import HistoryViewComponent from '../views/historyView.jsx';
+import ListViewComponent from '../views/listView.jsx';
+import MapViewComponent from '../views/mapView.jsx';
 import React from 'react';
-import HistoryView from '../views/historyView.jsx';
+import SettingsViewComponent from '../views/settingsView.jsx';
 
 const BottomNavigationComponent = () => {
   const [index, setIndex] = React.useState(0);
@@ -14,10 +15,10 @@ const BottomNavigationComponent = () => {
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
-    list: StationsList,
-    map: MapScreen,
-    history: HistoryView,
-    settings: StationsList,
+    list: ListViewComponent,
+    map: MapViewComponent,
+    history: HistoryViewComponent,
+    settings: SettingsViewComponent,
   });
 
   return (
