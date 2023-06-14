@@ -19,7 +19,6 @@
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.10.2",
     "react-native-maps": "^1.7.1",
-    "react-native-notifications": "^4.3.5",
     "react-native-paper": "^5.8.0",
     "react-native-paper-dates": "^0.18.1",
     "react-native-paper-dropdown": "^1.0.7",
