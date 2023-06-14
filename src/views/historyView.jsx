@@ -13,6 +13,7 @@ import {
 } from 'react-native-paper';
 import useAsyncStorage from '../hooks/useAsyncStorage';
 import {DatePickerInput} from 'react-native-paper-dates';
+import { ScrollView } from 'react-native';
 
 function HistoryView() {
   const [history, setHistory] = useAsyncStorage('history', []);
@@ -41,28 +42,30 @@ function HistoryView() {
       <Appbar.Header>
         <Appbar.Content title="Tankbuch" />
       </Appbar.Header>
-      <DataTable>
-        <DataTable.Header>
-          <DataTable.Title>Datum</DataTable.Title>
-          <DataTable.Title numeric>Preis</DataTable.Title>
-          <DataTable.Title numeric>Getankt</DataTable.Title>
-          <DataTable.Title numeric>Preis/Liter</DataTable.Title>
-        </DataTable.Header>
-        {history.map((entry, index) => (
-          <DataTable.Row key={index}>
-            <DataTable.Cell>{entry.date}</DataTable.Cell>
-            <DataTable.Cell numeric>
-              {entry.price.replace('.', ',')}€
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              {entry.amount.replace('.', ',')}L
-            </DataTable.Cell>
-            <DataTable.Cell numeric>
-              {(entry.price / entry.amount).toFixed(2).replace('.', ',')}€
-            </DataTable.Cell>
-          </DataTable.Row>
-        ))}
-      </DataTable>
+      <ScrollView>
+        <DataTable>
+          <DataTable.Header>
+            <DataTable.Title>Datum</DataTable.Title>
+            <DataTable.Title numeric>Preis</DataTable.Title>
+            <DataTable.Title numeric>Getankt</DataTable.Title>
+            <DataTable.Title numeric>Preis/Liter</DataTable.Title>
+          </DataTable.Header>
+          {history.map((entry, index) => (
+            <DataTable.Row key={index}>
+              <DataTable.Cell>{entry.date}</DataTable.Cell>
+              <DataTable.Cell numeric>
+                {entry.price.replace('.', ',')}€
+              </DataTable.Cell>
+              <DataTable.Cell numeric>
+                {entry.amount.replace('.', ',')}L
+              </DataTable.Cell>
+              <DataTable.Cell numeric>
+                {(entry.price / entry.amount).toFixed(2).replace('.', ',')}€
+              </DataTable.Cell>
+            </DataTable.Row>
+          ))}
+        </DataTable>
+      </ScrollView>
       <Portal>
         <Modal
           visible={visible}
@@ -108,6 +111,7 @@ function HistoryView() {
               style={{marginLeft: 'auto'}}
               mode="contained"
               onPress={() => {
+                if(modalPrice == null || modalAmount == null) return;
                 setVisible(false);
                 resetModal();
                 setHistory([

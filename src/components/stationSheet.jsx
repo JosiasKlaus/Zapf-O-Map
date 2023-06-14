@@ -38,7 +38,7 @@ const StationSheet = ({initStation, initSetStation}) => {
   const theme = useTheme();
 
   if(!initStation) {
-    bottomSheetRef.current.close();
+    bottomSheetRef.current?.close();
   }
 
   useEffect(() => {
