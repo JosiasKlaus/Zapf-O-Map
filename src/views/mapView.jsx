@@ -13,6 +13,7 @@ import StationMarker from '../components/stationMarker';
 import StationSheet from '../components/stationSheet';
 import {getStationList} from '../api/tankerkoenig';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import useAsyncStorage from '../hooks/useAsyncStorage';
 
 const DEFAULT_LATITUDE = 50.563527;
 const DEFAULT_LONGITUDE = 8.500261;
@@ -26,6 +27,7 @@ const DEFAULT_REGION = {
 };
 
 const MapViewComponent = ({stationId}) => {
+  const [fuelType, setFuelType] = useAsyncStorage("fuelType", "e5");
   const [location, setLocation] = useState(DEFAULT_REGION);
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [stations, setStations] = useState([]);
@@ -52,7 +54,7 @@ const MapViewComponent = ({stationId}) => {
 
   return (
     <View style={styles.container}>
-      <MapHeader radius={radius} setRadius={setRadius}/>
+      <MapHeader title={"Kartenansicht"} radius={radius} setRadius={setRadius}/>
       <GestureHandlerRootView style={{flex: 1}}>
         <MapView
           ref={mapRef}
@@ -76,7 +78,7 @@ const MapViewComponent = ({stationId}) => {
                   mapRef.current.animateToRegion(calculateRegion(station.lat, station.lng, radius), 100)
                 }, 100);
               }}>
-              <StationMarker title={station.brand} price={station.e5} />
+              <StationMarker title={station.brand} price={station[fuelType]} />
             </Marker>
           ))}
         </MapView>
