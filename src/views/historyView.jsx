@@ -3,6 +3,7 @@ import {
   Button,
   DataTable,
   FAB,
+  IconButton,
   Modal,
   Portal,
   Text,
@@ -11,18 +12,41 @@ import {
 } from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 
-import {DatePickerInput} from 'react-native-paper-dates';
+import {DatePickerInput, en, he} from 'react-native-paper-dates';
 import { ScrollView } from 'react-native';
 import useAsyncStorage from '../hooks/useAsyncStorage';
-import {useState} from 'react';
+import {useRef, useState} from 'react';
+import { Camera } from 'react-native-vision-camera';
+import { useCameraDevices } from 'react-native-vision-camera';
+import * as RNFS from 'react-native-fs';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
+import FileViewer from "react-native-file-viewer";
+
 
 const HistoryViewComponent = () => {
   const [history, setHistory] = useAsyncStorage('history', []);
   const [visible, setVisible] = useState(false);
+  const [cameraVisible, setCameraVisible] = useState(false);
 
   const [modalDate, setModalDate] = useState(new Date());
   const [modalPrice, setModalPrice] = useState(null);
   const [modalAmount, setModalAmount] = useState(null);
+  const [modalPhoto, setModalPhoto] = useState(null);
+
+  let cameraPermission = false;
+  Camera.getCameraPermissionStatus().then(status => {
+    if (status === 'authorized') {
+      cameraPermission = true;
+    } else {
+      Camera.requestCameraPermission().then(status => {
+        cameraPermission = status === 'authorized';
+      });
+    }
+  });
+  const devices = useCameraDevices()
+  const device = devices.back
+  const camera = useRef(null)
 
   const resetModal = () => {
     setModalDate(new Date());
@@ -52,7 +76,11 @@ const HistoryViewComponent = () => {
             <DataTable.Title numeric>Preis/Liter</DataTable.Title>
           </DataTable.Header>
           {history.map((entry, index) => (
-            <DataTable.Row key={index}>
+            <DataTable.Row key={index} onPress={() => {
+              if(entry.photo) {
+                FileViewer.open(entry.photo, {showOpenWithDialog: true});
+              }
+            }}>
               <DataTable.Cell>{entry.date}</DataTable.Cell>
               <DataTable.Cell numeric>
                 {entry.price.replace('.', ',')}€
@@ -108,8 +136,16 @@ const HistoryViewComponent = () => {
             />
           </View>
           <View style={{flexDirection: 'row', marginTop: 20}}>
+            <IconButton
+              icon="camera"
+              onPress={() => {
+                if (cameraPermission) {
+                  setCameraVisible(true);
+                }
+              }}
+            />
             <Button
-              style={{marginLeft: 'auto'}}
+              style={{marginLeft: 'auto', alignSelf: 'center'}}
               mode="contained"
               onPress={() => {
                 if(modalPrice == null || modalAmount == null) return;
@@ -125,12 +161,57 @@ const HistoryViewComponent = () => {
                     }),
                     price: (modalPrice.replace(',', '.') / 1).toFixed(2),
                     amount: (modalAmount.replace(',', '.') / 1).toFixed(2),
+                    photo: modalPhoto,
                   },
                 ]);
               }}>
               Hinzufügen
             </Button>
           </View>
+        </Modal>
+      </Portal>
+      <Portal>
+        <Modal
+          style={{...StyleSheet.absoluteFill}}
+          visible={cameraVisible}
+          onDismiss={() => setCameraVisible(false)}
+          contentContainerStyle={{
+            backgroundColor: theme.colors.surface,
+            width: '100%',
+            height: '100%'
+          }}
+        >
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Camera
+              ref={camera}
+              style={StyleSheet.absoluteFillObject}
+              device={device}
+              isActive={cameraVisible}
+              photo={true}
+            />
+            <FAB
+              style={{marginTop: 'auto', marginBottom: 20, borderRadius: 50}}
+              icon="camera"
+              customSize={64}
+              onPress={() => {
+                camera.current.takePhoto().then((data) => {
+                  RNFS.readFile(data.path, 'base64').then((data) => {
+                    const path = RNFS.DocumentDirectoryPath + '/' + uuidv4() + '.jpg';
+                    RNFS.writeFile(path, data, 'base64');
+                    setModalPhoto(path);
+                  });
+                  setCameraVisible(false);
+                });
+              }}
+            />
+          </View>          
         </Modal>
       </Portal>
       <FAB
