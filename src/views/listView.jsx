@@ -1,11 +1,12 @@
 import { StyleSheet, View } from 'react-native';
 import { Appbar, List, Text } from 'react-native-paper';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { getStationList } from '../api/tankerkoenig';
 import useAsyncStorage from '../hooks/useAsyncStorage';
 import MapHeader from '../components/mapHeader';
+import { getLocation } from '../utils/geolocation';
 
 function ListViewComponent() {
   const [fuelType, setFuelType] = useAsyncStorage("fuelType", "e5");
@@ -14,17 +15,25 @@ function ListViewComponent() {
   const [stations, setStations] = useState(null);
   const [favorites, setFavorites] = useAsyncStorage('favorites', []);
 
-  getStationList(50.563527, 8.500261, radius/1000, 'price').then(
-    data => {
-      for (let station of data) {
-        station.favorite = favorites.includes(station.id);
-      }
-      setStations(data);
-    },
-    error => {
-      console.log(error);
-    },
-  );
+  if(!location) {
+    getLocation(setLocation);
+  }
+
+  useEffect(() => {
+    if(location) {
+      getStationList(location.latitude, location.longitude, radius/1000, 'price').then(
+        data => {
+          for (let station of data) {
+            station.favorite = favorites.includes(station.id);
+          }
+          setStations(data);
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    }
+  }, [location, radius]);
 
   return (
     <View style={{flex: 1}}>
