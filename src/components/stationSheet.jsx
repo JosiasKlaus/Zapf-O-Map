@@ -92,7 +92,12 @@ const StationSheet = ({initStation, initSetStation}) => {
             <Text style={styles.distance}>{station?.dist}km entfernt</Text>
           </View>
         </View>
-        <StationButtons stationId={station?.id} />
+        <StationButtons
+          stationId={station?.id}
+          lat={station?.lat}
+          lng={station?.lng}
+          brand={station?.brand}
+        />
         <Text style={[styles.title, {marginTop: 10, marginLeft: 10}]}>Preise</Text>
         <PricingTable
           prices={{

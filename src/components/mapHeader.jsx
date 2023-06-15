@@ -44,6 +44,7 @@ const MapHeader = ({title, radius, setRadius}) => {
             minimumValue={1000}
             maximumValue={15000}
             step={250}
+            value={radius}
             onValueChange={value => setRadius(value)}
             thumbTintColor={theme.colors.primary}
             minimumTrackTintColor={theme.colors.onBackground}

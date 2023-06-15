@@ -1,5 +1,5 @@
-import { StyleSheet, View } from 'react-native';
-import { Appbar, List, Text } from 'react-native-paper';
+import { View } from 'react-native';
+import { List, Text } from 'react-native-paper';
 
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -21,7 +21,7 @@ function ListViewComponent() {
 
   useEffect(() => {
     if(location) {
-      getStationList(location.latitude, location.longitude, radius/1000, 'price').then(
+      getStationList(location.latitude, location.longitude, radius/1000).then(
         data => {
           for (let station of data) {
             station.favorite = favorites.includes(station.id);
@@ -73,7 +73,5 @@ function ListViewComponent() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default ListViewComponent;
