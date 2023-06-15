@@ -3,13 +3,13 @@ import {Image, View} from 'react-native';
 import {useState} from 'react';
 import Slider from '@react-native-community/slider';
 
-const MapHeader = ({radius, setRadius}) => {
+const MapHeader = ({title, radius, setRadius}) => {
   const [headerVisible, setHeaderVisible] = useState(false);
   const theme = useTheme();
   return (
     <View>
       <Appbar.Header>
-        <Appbar.Content title="Kartenansicht" />
+        <Appbar.Content title={title} />
         <Appbar.Action icon="menu" onPress={() => {setHeaderVisible(!headerVisible)}} />
       </Appbar.Header>
       {headerVisible ? (
@@ -22,7 +22,8 @@ const MapHeader = ({radius, setRadius}) => {
             flex: 0
           }}
         >
-          <View style={{flexDirection: 'row', paddingHorizontal: 20 }}>
+          {/* Disabled beacuse error in addressToCoordinates always returns undefined for RN greater then 0.69 (github issue #1071) */}
+          {/* <View style={{flexDirection: 'row', paddingHorizontal: 20 }}>
             <TextInput
               style={{height: 40, flex: 1, marginRight: 10}}
               label="Adresse oder Ort"
@@ -36,7 +37,7 @@ const MapHeader = ({radius, setRadius}) => {
               mode='contained'
               compact={true}
               onPress={() => console.log('Pressed')} />
-          </View>
+          </View> */}
           <Text style={{marginLeft: 20, marginTop: 20}}>Radius ({radius/1000}KM)</Text>
           <Slider
             style={{marginHorizontal: 10, marginTop: 10, marginBottom: 20}}
