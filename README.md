@@ -2,16 +2,29 @@
 
 ## Einrichtung der Entwicklungsumgebung
 
-Zum Einrichten der Entwicklungsumgebung inkl. Android-Debugging müssen nach dem Klonen der Repository lediglich die Node.js-Packages installiert und die Android SDK heruntergeladen werden. Hierzu reicht es die folgenden zwei Befehle auszuführen:
-
+Zum Einrichten der Entwicklungsumgebung müssen nach dem Klonen der Repository die Node.js-Packages installiert und die Android SDK eingerichtet werden.
+Desweitern ist es notwendig die Datei `local.properties` im `android`-Ordner zu erstellen und den MAPS_API_KEY einzutragen.
 ```pwsh
 npm install
-.\setup_android.ps1
 ```
 
 Anschließend kann das Projek in VS Code mittel dem F5-Hotkey oder über die Debugging-Ansicht gestartet werden.
+Andernfalls per CLI mit folgendem Befehl:
+```pwsh
+npx react-native run-android
+```
+
+## Arbeitsverteiling
+
+Die grobe Arbeitsverteilung im Projekt setzt sich wie folgt zusammen:
+- Tobias Kapitza: Listenansicht, App-Demo / Bilddoku, Präsentation
+- Josias Klaus: Kartenansicht, Einstellungen & Zusammenführen der Komponenten
+- Johannes Freund: Tankbuch, Präsentation, Vorstellung
+
 
 ## Libraries
+
+Hier eine (evtl. nicht vollständige Liste der verwendeten Libraries)
 
 - React Native Paper
   - [Repository](https://github.com/callstack/react-native-paper)
