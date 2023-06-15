@@ -28,4 +28,10 @@
       android:name="com.google.android.geo.API_KEY"
       android:value="${MAPS_API_KEY}" />
   </application>
+  <queries>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:mimeType="image/jpeg" />
+    </intent>
+  </queries>
 </manifest>
