@@ -1,18 +1,15 @@
-import {Appbar, Banner, useTheme} from 'react-native-paper';
-import {Image, StyleSheet, View} from 'react-native';
+import {useTheme} from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {calculateRegion, getLocation} from '../utils/geolocation';
 import {mapStyleDark, mapStyleLight} from '../utils/mapstyle';
 import {useEffect, useRef, useState} from 'react';
 
-import { BaseAnimationBuilder } from 'react-native-reanimated';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import MapHeader from '../components/mapHeader';
-import Slider from '@react-native-community/slider';
 import StationMarker from '../components/stationMarker';
 import StationSheet from '../components/stationSheet';
 import {getStationList} from '../api/tankerkoenig';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useAsyncStorage from '../hooks/useAsyncStorage';
 
 const DEFAULT_LATITUDE = 50.563527;
@@ -26,14 +23,13 @@ const DEFAULT_REGION = {
   longitudeDelta: 0.015,
 };
 
-const MapViewComponent = ({stationId}) => {
+const MapViewComponent = () => {
   const [fuelType, setFuelType] = useAsyncStorage("fuelType", "e5");
   const [location, setLocation] = useState(DEFAULT_REGION);
   const [radius, setRadius] = useState(DEFAULT_RADIUS);
   const [stations, setStations] = useState([]);
   const [station, setStation] = useState(null);
 
-  const insets = useSafeAreaInsets();
   const theme = useTheme();
   const mapRef = useRef(null);
 
